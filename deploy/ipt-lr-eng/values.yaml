@@ -16,11 +16,16 @@ service:
 # Port the container listens on (see the Dockerfile: `serve -l 3000`).
 containerPort: 3000
 
+# The `user` namespace carries an ARM-managed ResourceQuota (limits.cpu 2,
+# limits.memory 4Gi, requests.cpu 2, requests.memory 4Gi). A quota that caps
+# limits.* makes both limits mandatory - a container missing either one is
+# rejected at admission. Keep these small: 2 replicas use 400m/256Mi of the cap.
 resources:
   requests:
     cpu: 10m
     memory: 32Mi
   limits:
+    cpu: 200m
     memory: 128Mi
 
 # The image already runs as the non-root `nodeapp` user, this just hardens it

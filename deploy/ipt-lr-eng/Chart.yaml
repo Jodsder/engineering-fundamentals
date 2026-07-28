@@ -6,7 +6,7 @@ type: application
 # Version of this chart. Argo CD re-syncs on any commit that touches this
 # directory, so bumping this is not required to trigger a deployment - but it
 # keeps the release history readable.
-version: 0.1.0
+version: 0.1.1
 
 # Container image tag deployed by default (see values.yaml image.tag).
 appVersion: "v1.0"
