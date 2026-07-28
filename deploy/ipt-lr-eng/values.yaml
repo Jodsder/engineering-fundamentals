@@ -8,9 +8,12 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  # ClusterIP keeps the app inside the cluster - reach it with
-  # `kubectl port-forward`. Set to LoadBalancer to get a public IP.
-  type: ClusterIP
+  # LoadBalancer makes the in-cluster Azure cloud-provider controller add a
+  # frontend IP and rules to the cluster's existing Standard load balancer
+  # (`kubernetes`, in the MC_ node resource group) and allocate a public IP.
+  # Set back to ClusterIP to take the app off the internet - it is then only
+  # reachable via `kubectl port-forward`.
+  type: LoadBalancer
   port: 80
 
 # Port the container listens on (see the Dockerfile: `serve -l 3000`).
