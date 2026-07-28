@@ -1,0 +1,37 @@
+replicaCount: 2
+
+image:
+  repository: dockerlimes/ipt-lr-eng
+  # Swap this for your own ACR image from Part B, e.g.
+  #   repository: <registry>.azurecr.io/ipt-lr-eng
+  tag: v1.0
+  pullPolicy: IfNotPresent
+
+service:
+  # ClusterIP keeps the app inside the cluster - reach it with
+  # `kubectl port-forward`. Set to LoadBalancer to get a public IP.
+  type: ClusterIP
+  port: 80
+
+# Port the container listens on (see the Dockerfile: `serve -l 3000`).
+containerPort: 3000
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+# The image already runs as the non-root `nodeapp` user, this just hardens it
+# further. runAsNonRoot is intentionally not set: the image declares its user by
+# name rather than by UID, which the kubelet cannot verify.
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

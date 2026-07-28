@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Helm chart dependencies (vendored tarballs). Chart.lock is committed instead;
+# run `helm dependency update` to restore them.
+deploy/**/charts/
+

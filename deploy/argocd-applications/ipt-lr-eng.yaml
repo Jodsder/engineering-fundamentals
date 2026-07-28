@@ -1,0 +1,47 @@
+# Argo CD Application: watches deploy/ipt-lr-eng in this repo and keeps the
+# `user` namespace in sync with it.
+#
+# Bootstrap once with:
+#   kubectl apply -f deploy/argocd-applications/ipt-lr-eng.yaml
+#
+# After that Argo CD owns the workload - push a change to the chart and it rolls
+# out on its own, no kubectl or helm needed.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ipt-lr-eng
+  namespace: argocd
+  finalizers:
+    # Deleting this Application also deletes the resources it created.
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Jodsder/engineering-fundamentals.git
+    targetRevision: main
+    path: deploy/ipt-lr-eng
+    helm:
+      # Argo CD uses the chart's own values.yaml by default. Overrides that
+      # should apply only to this cluster go here rather than in the chart.
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: user
+
+  syncPolicy:
+    automated:
+      # Delete resources that were removed from Git.
+      prune: true
+      # Revert manual changes made directly against the cluster.
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  revisionHistoryLimit: 5

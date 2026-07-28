@@ -1,0 +1,46 @@
+# Values for the upstream argo-cd chart. Everything under the `argo-cd:` key is
+# forwarded to the dependency declared in Chart.yaml.
+#
+# This is a deliberately basic, non-HA setup: one replica per component, no SSO,
+# no ingress. Access is via `kubectl port-forward` (see README.md).
+
+argo-cd:
+  crds:
+    install: true
+    # Leave the CRDs in place when the release is uninstalled, so that
+    # Application/AppProject objects are not garbage collected by accident.
+    keep: true
+
+  configs:
+    cm:
+      # Built-in `admin` user. Keep it enabled until SSO is configured.
+      admin.enabled: true
+      # How often Argo CD re-checks Git for drift.
+      timeout.reconciliation: 180s
+    params:
+      # Argo CD terminates TLS itself. Set this to true only once an ingress
+      # controller in front of it does the TLS termination.
+      server.insecure: false
+
+  # Single replica per component - no HA, no autoscaling.
+  controller:
+    replicas: 1
+
+  server:
+    replicas: 1
+    service:
+      # ClusterIP keeps the UI off the public internet. Switch to LoadBalancer
+      # (or add an ingress) to expose it.
+      type: ClusterIP
+
+  repoServer:
+    replicas: 1
+
+  applicationSet:
+    replicas: 1
+
+  # Not needed for the basic setup.
+  dex:
+    enabled: false
+  notifications:
+    enabled: false

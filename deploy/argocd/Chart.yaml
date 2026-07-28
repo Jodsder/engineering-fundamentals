@@ -1,0 +1,15 @@
+apiVersion: v2
+name: argocd
+description: Argo CD installation for the engineering-fundamentals AKS cluster (Part E - GitOps)
+type: application
+
+# Version of this wrapper chart. Bump on every change to values.yaml.
+version: 0.1.0
+
+# Argo CD version that the pinned dependency below ships.
+appVersion: "3.4.5"
+
+dependencies:
+  - name: argo-cd
+    version: 10.2.1
+    repository: https://argoproj.github.io/argo-helm
